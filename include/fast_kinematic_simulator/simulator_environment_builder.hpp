@@ -85,17 +85,17 @@ namespace simulator_environment_builder
 
         EnvironmentComponents(const sdf_tools::TaggedObjectCollisionMapGrid& environment, const sdf_tools::SignedDistanceField& environment_sdf, const simple_simulator_interface::SurfaceNormalGrid& surface_normals_grid) : environment_(environment), environment_sdf_(environment_sdf), surface_normals_grid_(surface_normals_grid) {}
 
-        inline const sdf_tools::TaggedObjectCollisionMapGrid& GetEnvironment()
+        inline const sdf_tools::TaggedObjectCollisionMapGrid& GetEnvironment() const
         {
             return environment_;
         }
 
-        inline const sdf_tools::SignedDistanceField& GetEnvironmentSDF()
+        inline const sdf_tools::SignedDistanceField& GetEnvironmentSDF() const
         {
             return environment_sdf_;
         }
 
-        inline const simple_simulator_interface::SurfaceNormalGrid& GetSurfaceNormalsGrid()
+        inline const simple_simulator_interface::SurfaceNormalGrid& GetSurfaceNormalsGrid() const
         {
             return surface_normals_grid_;
         }
