@@ -68,6 +68,8 @@ namespace simple_particle_contact_simulator
 
     public:
 
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
         SimpleParticleContactSimulator(const sdf_tools::TaggedObjectCollisionMapGrid& environment, const sdf_tools::SignedDistanceField& environment_sdf, const simple_simulator_interface::SurfaceNormalGrid& surface_normals_grid, const SimulatorSolverParameters& solver_config, const double simulation_controller_frequency, const int32_t debug_level) : simple_simulator_interface::SimulatorInterface<Robot, Configuration, RNG, ConfigAlloc>(environment, environment_sdf, surface_normals_grid, debug_level)
         {
             contact_distance_threshold_ = 0.0;
