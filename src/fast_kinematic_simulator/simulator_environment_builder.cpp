@@ -49,7 +49,103 @@ std::vector<std::pair<Eigen::Vector3d, sdf_tools::TAGGED_OBJECT_COLLISION_CELL>>
 sdf_tools::TaggedObjectCollisionMapGrid simulator_environment_builder::BuildEnvironment(const std::string& environment_id, const double resolution)
 {
     std::cout << "Generating the " << environment_id << " environment" << std::endl;
-    if (environment_id == "nested_corners")
+    if (environment_id == "se3_path_metric_test")
+    {
+        double grid_x_size = 10.0;
+        double grid_y_size = 10.0;
+        double grid_z_size = 10.0;
+        // The grid origin is the minimum point, with identity rotation
+        Eigen::Translation3d grid_origin_translation(0.0, 0.0, 0.0);
+        Eigen::Quaterniond grid_origin_rotation = Eigen::Quaterniond::Identity();
+        Eigen::Affine3d grid_origin_transform = grid_origin_translation * grid_origin_rotation;
+        // Make the grid
+        sdf_tools::TAGGED_OBJECT_COLLISION_CELL default_cell(1.0, 1u, 0u, 0u); // Everything is filled by default
+        sdf_tools::TaggedObjectCollisionMapGrid grid(grid_origin_transform, "uncertainty_planning_simulator", resolution, grid_x_size, grid_y_size, grid_z_size, default_cell);
+        for (int64_t x_idx = 0; x_idx < grid.GetNumXCells(); x_idx++)
+        {
+            for (int64_t y_idx = 0; y_idx < grid.GetNumYCells(); y_idx++)
+            {
+                for (int64_t z_idx = 0; z_idx < grid.GetNumZCells(); z_idx++)
+                {
+                    const Eigen::Vector3d location = EigenHelpers::StdVectorDoubleToEigenVector3d(grid.GridIndexToLocation(x_idx, y_idx, z_idx));
+                    const double& x = location.x();
+                    const double& y = location.y();
+                    const double& z = location.z();
+                    // Check if the cell belongs to any of the regions of freespace
+                    if (x > 0.5 && y > 0.5 && x <= 9.5 && y <= 9.5 && z > 0.5 && z < 4.5)
+                    {
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.AddToConvexSegment(1u);
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.occupancy = 0.0f;
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.object_id = 0u;
+                    }
+                    if (x > 0.5 && y > 0.5 && x <= 9.5 && y <= 9.5 && z > 5.5 && z < 9.5)
+                    {
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.AddToConvexSegment(2u);
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.occupancy = 0.0f;
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.object_id = 0u;
+                    }
+                    if (x > 4.75 && y > 4.75 && x <= 5.25 && y <= 5.25 && z > 0.5 && z < 9.5)
+                    {
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.AddToConvexSegment(3u);
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.occupancy = 0.0f;
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.object_id = 0u;
+                    }
+                    if (x <= 0.5 || x > 9.5 || y <= 0.5 || y > 9.5 || z <= 0.5 || z > 9.5)
+                    {
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.object_id = 0u;
+                    }
+                }
+            }
+        }
+        return grid;
+    }
+    else if (environment_id == "se2_path_metric_test")
+    {
+        double grid_x_size = 10.0;
+        double grid_y_size = 10.0;
+        double grid_z_size = 1.0;
+        // The grid origin is the minimum point, with identity rotation
+        Eigen::Translation3d grid_origin_translation(0.0, 0.0, -0.5);
+        Eigen::Quaterniond grid_origin_rotation = Eigen::Quaterniond::Identity();
+        Eigen::Affine3d grid_origin_transform = grid_origin_translation * grid_origin_rotation;
+        // Make the grid
+        sdf_tools::TAGGED_OBJECT_COLLISION_CELL default_cell(1.0, 1u, 0u, 0u); // Everything is filled by default
+        sdf_tools::TaggedObjectCollisionMapGrid grid(grid_origin_transform, "uncertainty_planning_simulator", resolution, grid_x_size, grid_y_size, grid_z_size, default_cell);
+        for (int64_t x_idx = 0; x_idx < grid.GetNumXCells(); x_idx++)
+        {
+            for (int64_t y_idx = 0; y_idx < grid.GetNumYCells(); y_idx++)
+            {
+                for (int64_t z_idx = 0; z_idx < grid.GetNumZCells(); z_idx++)
+                {
+                    const Eigen::Vector3d location = EigenHelpers::StdVectorDoubleToEigenVector3d(grid.GridIndexToLocation(x_idx, y_idx, z_idx));
+                    const double& x = location.x();
+                    const double& y = location.y();
+                    //const double& z = location.z();
+                    // Check if the cell belongs to any of the regions of freespace
+                    if (x > 0.5 && y > 0.5 && x <= 4.5 && y <= 9.5)
+                    {
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.AddToConvexSegment(1u);
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.occupancy = 0.0f;
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.object_id = 0u;
+                    }
+                    if (x > 5.5 && y > 0.5 && x <= 9.5 && y <= 9.5)
+                    {
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.AddToConvexSegment(2u);
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.occupancy = 0.0f;
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.object_id = 0u;
+                    }
+                    if (x > 0.5 && y > 4.0 && x <= 9.5 && y <= 6.0)
+                    {
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.AddToConvexSegment(3u);
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.occupancy = 0.0f;
+                        grid.GetMutable(x_idx, y_idx, z_idx).first.object_id = 0u;
+                    }
+                }
+            }
+        }
+        return grid;
+    }
+    else if (environment_id == "nested_corners")
     {
         double grid_x_size = 10.0;
         double grid_y_size = 10.0;
@@ -1977,7 +2073,7 @@ void simulator_environment_builder::UpdateSurfaceNormalGridCell(const std::vecto
 {
     const Eigen::Vector3d world_location = transform * cell_location;
     // Let's check the penetration distance. We only want to update cells that are *actually* on the surface
-    const float distance = environment_sdf.Get(world_location);
+    const float distance = environment_sdf.Get3d(world_location);
     // If we're within one cell of the surface, we update
     if (distance > -(environment_sdf.GetResolution() * 1.5))
     {
@@ -2159,6 +2255,14 @@ simple_simulator_interface::SurfaceNormalGrid simulator_environment_builder::Bui
         ;
     }
     else if (environment_id == "se3_cluttered_new")
+    {
+        ;
+    }
+    else if (environment_id == "se3_path_metric_test")
+    {
+        ;
+    }
+    else if (environment_id == "se2_path_metric_test")
     {
         ;
     }
@@ -2380,7 +2484,6 @@ simple_simulator_interface::SurfaceNormalGrid simulator_environment_builder::Bui
     }
     return surface_normals_grid;
 }
-
 
 simulator_environment_builder::EnvironmentComponents simulator_environment_builder::BuildCompleteEnvironment(const std::vector<OBSTACLE_CONFIG>& obstacles, const double resolution)
 {
