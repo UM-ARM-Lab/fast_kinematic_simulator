@@ -8,13 +8,13 @@ This package provides the fast kinematic simulator used in our framework for mot
 - Tools for building simulation environments
 - Examples for using the simulator directly
 
-While the simulator itself is template-based, this package provides a library containing concrete instantiations of the simulator for different types of robot. When possible, you should use these rather interfacing with the planner directly.
+While the simulator itself is template-based, this package provides a library containing concrete instantiations of the simulator for different types of robot. When possible, you should use these rather than instantiating the simulator directly.
 
 ## Dependencies
 
 - [arc_utilities](https://github.com/UM-ARM-LAB/arc_utilities)
  
-Provides a range of utility and math functions, as well as templated implementations of kinodynamic RRT, Dijkstra's algorithm, and hierarchical clustering.
+Provides a range of utility and math functions.
 
 - [sdf_tools](https://github.com/UM-ARM-LAB/sdf_tools)
 
@@ -26,7 +26,7 @@ Defines the interface for the simulator and provides the robot models.
 
 - [ROS Kinetic](http://ros.org)
 
-ROS is required for the build system, Catkin, and for RViz, which the planner uses as an optional visualization interface.
+ROS is required for the build system, Catkin, and for RViz, which the simulator uses as an optional visualization interface.
 
 ## Examples
 
