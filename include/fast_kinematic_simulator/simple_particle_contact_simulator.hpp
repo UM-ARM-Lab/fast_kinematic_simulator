@@ -687,7 +687,7 @@ namespace simple_particle_contact_simulator
             current_robot.UpdatePosition(config);
             const std::vector<std::pair<std::string, std::shared_ptr<EigenHelpers::VectorVector4d>>> robot_links_points = current_robot.GetRawLinksPoints();
             const double environment_collision_distance_threshold = inflation_ratio * this->environment_.GetResolution();
-            const double self_collision_check_resolution = (inflation_ratio + 1) * this->environment_.GetResolution();
+            const double self_collision_check_resolution = (inflation_ratio + 1.0) * this->environment_.GetResolution();
             const bool env_collision = CheckEnvironmentCollision(current_robot, robot_links_points, environment_collision_distance_threshold);
             const bool self_collision = CheckSelfCollisions(current_robot, robot_links_points, self_collision_check_resolution);
             //std::cout << self_collisions.size() << " self-colliding points to resolve" << std::endl;
@@ -836,17 +836,23 @@ namespace simple_particle_contact_simulator
             const std::vector<std::pair<std::string, std::shared_ptr<EigenHelpers::VectorVector4d>>> robot_links_points = robot.GetRawLinksPoints();
             // Step along the control input
             // First, figure out how much workspace motion is actually going to result from the control input
-            const double computed_step_motion = EstimateMaxControlInputWorkspaceMotion(robot, control_input);
-            const double allowed_microstep_distance = this->GetResolution() * 1.0; //0.25;
-            const uint32_t number_microsteps = std::max(1u, ((uint32_t)ceil(computed_step_motion / allowed_microstep_distance)));
+            const double computed_step_motion = EstimateMaxControlInputWorkspaceMotion(robot, real_control_input);
+            const double target_microstep_distance = this->GetResolution() * 0.125;
+            const double allowed_microstep_distance = this->GetResolution() * 1.0;
+            const uint32_t number_microsteps = std::max(1u, ((uint32_t)ceil(computed_step_motion / target_microstep_distance)));
             if (this->debug_level_ >= 2)
             {
                 const std::string msg3 = "[" + std::to_string(call_number) + "] Resolving simulation step with computed motion: " + std::to_string(computed_step_motion) + " in " + std::to_string(number_microsteps) + " microsteps";
                 std::cout << msg3 << std::endl;
             }
-            const Eigen::VectorXd control_input_step = real_control_input * (1.0 / (double)number_microsteps);
+            const Eigen::VectorXd control_input_step = real_control_input / (double)number_microsteps;
             const double computed_microstep_motion = EstimateMaxControlInputWorkspaceMotion(robot, control_input_step);
-            assert(computed_microstep_motion <= allowed_microstep_distance);
+            if (computed_microstep_motion > allowed_microstep_distance)
+            {
+                const std::string msg = "[" + std::to_string(call_number) + "] Computed microstep motion: " + std::to_string(computed_microstep_motion) + " > allowed " + std::to_string(allowed_microstep_distance);
+                std::cerr << msg << std::endl;
+                assert(false);
+            }
             if (this->debug_level_ >= 25)
             {
                 const std::string msg4 = "[" + std::to_string(call_number) + "] Control input step: " + PrettyPrint::PrettyPrint(control_input_step);
@@ -1134,9 +1140,10 @@ namespace simple_particle_contact_simulator
                     {
                         const std::string msg = "[" + std::to_string(call_number) + "] (Current) Point out of bounds: " + PrettyPrint::PrettyPrint(current_point_location);
                         arc_helpers::ConditionalPrint(msg, 0, this->debug_level_);
-#ifdef ASSERT_ON_OUT_OF_BOUNDS
-                        assert(false);
-#endif
+                        if (this->debug_level_ >= 5)
+                        {
+                            assert(false);
+                        }
                     }
                     // We only work with points in collision
                     if (current_sdf_check.first < this->resolution_distance_threshold_ && current_sdf_check.second)
