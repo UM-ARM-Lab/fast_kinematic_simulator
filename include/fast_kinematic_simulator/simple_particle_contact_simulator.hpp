@@ -227,7 +227,7 @@ namespace simple_particle_contact_simulator
                 const std::string& link_name = robot_links_points[link_idx].first;
                 const EigenHelpers::VectorVector4d& link_points = *(robot_links_points[link_idx].second);
                 // Get the transform of the current link
-                const Eigen::Affine3d link_transform = robot.GetLinkTransform(link_name);
+                const Eigen::Isometry3d link_transform = robot.GetLinkTransform(link_name);
                 // Now, go through the points of the link
                 for (size_t point_idx = 0; point_idx < link_points.size(); point_idx++)
                 {
@@ -329,8 +329,8 @@ namespace simple_particle_contact_simulator
                         if (link_collisions.find(link_idx) != link_collisions.end())
                         {
                             const std::string& link_name = robot_links_points[link_itr->first].first;
-                            const Eigen::Affine3d previous_link_transform = previous_robot.GetLinkTransform(link_name);
-                            const Eigen::Affine3d current_link_transform = current_robot.GetLinkTransform(link_name);
+                            const Eigen::Isometry3d previous_link_transform = previous_robot.GetLinkTransform(link_name);
+                            const Eigen::Isometry3d current_link_transform = current_robot.GetLinkTransform(link_name);
                             const std::vector<size_t>& link_points = link_itr->second;
                             Eigen::Vector4d link_momentum_vector(0.0, 0.0, 0.0, 0.0);
                             for (size_t idx = 0; idx < link_points.size(); idx++)
@@ -359,7 +359,7 @@ namespace simple_particle_contact_simulator
                     {
                         const size_t link_idx = link_itr->first;
                         const std::string& link_name = robot_links_points[link_idx].first;
-                        const Eigen::Affine3d previous_link_transform = previous_robot.GetLinkTransform(link_name);
+                        const Eigen::Isometry3d previous_link_transform = previous_robot.GetLinkTransform(link_name);
                         const Eigen::Vector4d& link_point = (*robot_links_points[link_idx].second)[point_self_collision_check_map[link_idx].front()];
                         const Eigen::Vector4d link_point_location = previous_link_transform * link_point;
                         const std::vector<size_t>& colliding_links = link_itr->second;
@@ -386,7 +386,7 @@ namespace simple_particle_contact_simulator
                         {
                             const size_t other_link_idx = colliding_links[(size_t)collision];
                             const std::string& other_link_name = robot_links_points[other_link_idx].first;
-                            const Eigen::Affine3d previous_other_link_transform = previous_robot.GetLinkTransform(other_link_name);
+                            const Eigen::Isometry3d previous_other_link_transform = previous_robot.GetLinkTransform(other_link_name);
                             const Eigen::Vector4d& other_link_point = (*robot_links_points[other_link_idx].second)[point_self_collision_check_map[other_link_idx].front()];
                             const Eigen::Vector4d other_link_point_location = previous_other_link_transform * other_link_point;
                             // Compute the contact normal
@@ -501,7 +501,7 @@ namespace simple_particle_contact_simulator
                 const std::string& link_name = robot_links_points[link_idx].first;
                 const EigenHelpers::VectorVector4d& link_points = *(robot_links_points[link_idx].second);
                 // Get the transform of the current link
-                const Eigen::Affine3d link_transform = current_robot.GetLinkTransform(link_name);
+                const Eigen::Isometry3d link_transform = current_robot.GetLinkTransform(link_name);
                 // Now, go through the points of the link
                 for (size_t point_idx = 0; point_idx < link_points.size(); point_idx++)
                 {
@@ -635,7 +635,7 @@ namespace simple_particle_contact_simulator
                 const std::string& link_name = robot_links_points[link_idx].first;
                 const EigenHelpers::VectorVector4d& link_points = *(robot_links_points[link_idx].second);
                 // Get the transform of the current link
-                const Eigen::Affine3d link_transform = current_robot.GetLinkTransform(link_name);
+                const Eigen::Isometry3d link_transform = current_robot.GetLinkTransform(link_name);
                 // Now, go through the points of the link
                 for (size_t point_idx = 0; point_idx < link_points.size(); point_idx++)
                 {
@@ -754,7 +754,7 @@ namespace simple_particle_contact_simulator
                 const std::string& link_name = robot_links_points[link_idx].first;
                 const EigenHelpers::VectorVector4d& link_points = *(robot_links_points[link_idx].second);
                 // Get the *current* transform of the current link
-                const Eigen::Affine3d current_link_transform = current_robot.GetLinkTransform(link_name);
+                const Eigen::Isometry3d current_link_transform = current_robot.GetLinkTransform(link_name);
                 // Now, go through the points of the link
                 for (size_t point_idx = 0; point_idx < link_points.size(); point_idx++)
                 {
@@ -783,9 +783,9 @@ namespace simple_particle_contact_simulator
                 const std::string& link_name = robot_links_points[link_idx].first;
                 const EigenHelpers::VectorVector4d& link_points = *(robot_links_points[link_idx].second);
                 // Get the *current* transform of the current link
-                const Eigen::Affine3d current_link_transform = start_robot.GetLinkTransform(link_name);
+                const Eigen::Isometry3d current_link_transform = start_robot.GetLinkTransform(link_name);
                 // Get the *next* transform of the current link
-                const Eigen::Affine3d next_link_transform = end_robot.GetLinkTransform(link_name);
+                const Eigen::Isometry3d next_link_transform = end_robot.GetLinkTransform(link_name);
                 // Now, go through the points of the link
                 for (size_t point_idx = 0; point_idx < link_points.size(); point_idx++)
                 {
@@ -1113,8 +1113,8 @@ namespace simple_particle_contact_simulator
                 const std::string& link_name = robot_links_points[link_idx].first;
                 const EigenHelpers::VectorVector4d& link_points = (*robot_links_points[link_idx].second);
                 // Get the transform of the current link
-                const Eigen::Affine3d previous_link_transform = previous_robot.GetLinkTransform(link_name);
-                const Eigen::Affine3d current_link_transform = current_robot.GetLinkTransform(link_name);
+                const Eigen::Isometry3d previous_link_transform = previous_robot.GetLinkTransform(link_name);
+                const Eigen::Isometry3d current_link_transform = current_robot.GetLinkTransform(link_name);
                 // Now, go through the points of the link
                 for (size_t point_idx = 0; point_idx < link_points.size(); point_idx++)
                 {

@@ -23,13 +23,13 @@ namespace simulator_environment_builder
 {
     struct OBSTACLE_CONFIG
     {
-        Eigen::Affine3d pose;
+        Eigen::Isometry3d pose;
         Eigen::Vector3d extents;
         uint32_t object_id;
 
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        OBSTACLE_CONFIG(const uint32_t in_object_id, const Eigen::Affine3d& in_pose, const Eigen::Vector3d& in_extents) : pose(in_pose), extents(in_extents)
+        OBSTACLE_CONFIG(const uint32_t in_object_id, const Eigen::Isometry3d& in_pose, const Eigen::Vector3d& in_extents) : pose(in_pose), extents(in_extents)
         {
             assert(in_object_id > 0);
             object_id = in_object_id;
@@ -43,7 +43,7 @@ namespace simulator_environment_builder
             extents = in_extents;
         }
 
-        OBSTACLE_CONFIG() : pose(Eigen::Affine3d::Identity()), extents(0.0, 0.0, 0.0), object_id(0u) {}
+        OBSTACLE_CONFIG() : pose(Eigen::Isometry3d::Identity()), extents(0.0, 0.0, 0.0), object_id(0u) {}
     };
 
     struct RawCellSurfaceNormal
@@ -65,7 +65,7 @@ namespace simulator_environment_builder
     /* Build a new environment from the provided obstacles */
     sdf_tools::TaggedObjectCollisionMapGrid BuildEnvironment(const std::vector<OBSTACLE_CONFIG>& obstacles, const double resolution);
 
-    void UpdateSurfaceNormalGridCell(const std::vector<RawCellSurfaceNormal>& raw_surface_normals, const Eigen::Affine3d& transform, const Eigen::Vector3d& cell_location, const sdf_tools::SignedDistanceField& environment_sdf, simple_simulator_interface::SurfaceNormalGrid& surface_normals_grid);
+    void UpdateSurfaceNormalGridCell(const std::vector<RawCellSurfaceNormal>& raw_surface_normals, const Eigen::Isometry3d& transform, const Eigen::Vector3d& cell_location, const sdf_tools::SignedDistanceField& environment_sdf, simple_simulator_interface::SurfaceNormalGrid& surface_normals_grid);
 
     void AdjustSurfaceNormalGridForAllFlatSurfaces(const sdf_tools::SignedDistanceField& environment_sdf, simple_simulator_interface::SurfaceNormalGrid& surface_normals_grid);
 
